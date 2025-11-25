@@ -1,0 +1,67 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="p-10 max-w-5xl mx-auto h-full overflow-y-auto">
+    <div class="mb-10 border-b border-slate-700/50 pb-6">
+        <h1 class="text-3xl font-bold text-white">Configurações do Agente</h1>
+        <p class="text-slate-400 mt-2">Personalize a identidade da sua IA de marketing.</p>
+    </div>
+
+    <form method="POST" class="space-y-8">
+        {% csrf_token %}
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <section class="space-y-6">
+                <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <span class="w-1 h-6 bg-brand-primary rounded-full"></span>
+                    Dados da Empresa
+                </h3>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Nome da Empresa</label>
+                    <input type="text" name="company_name" value="{{ config.company_name }}"
+                        class="w-full bg-brand-surface border border-slate-600/50 rounded-xl p-3 text-white focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Tom de Voz</label>
+                    <select name="tone" class="w-full bg-brand-surface border border-slate-600/50 rounded-xl p-3 text-white focus:border-brand-primary outline-none">
+                        <option value="Profissional" {% if config.tone == 'Profissional' %}selected{% endif %}>Profissional</option>
+                        <option value="Jovem e Descolado" {% if config.tone == 'Jovem e Descolado' %}selected{% endif %}>Jovem e Descolado</option>
+                        <option value="Luxuoso" {% if config.tone == 'Luxuoso' %}selected{% endif %}>Luxuoso</option>
+                    </select>
+                </div>
+            </section>
+
+            <section class="space-y-6">
+                <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <span class="w-1 h-6 bg-brand-primary rounded-full"></span>
+                    Estratégia
+                </h3>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Público Alvo Principal</label>
+                    <textarea name="target_audience" rows="4"
+                        class="w-full bg-brand-surface border border-slate-600/50 rounded-xl p-3 text-white focus:border-brand-primary outline-none resize-none">{{ config.target_audience }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-4">Nível de Criatividade ({{ config.creativity }})</label>
+                    <input type="range" step="0.1" min="0" max="1" name="creativity" value="{{ config.creativity }}"
+                        class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-primary">
+                    <div class="flex justify-between text-xs text-slate-500 mt-2">
+                        <span>Conservador</span>
+                        <span>Ousado</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="pt-8 flex justify-end">
+            <button type="submit" class="bg-brand-primary hover:bg-blue-600 text-white font-bold py-3 px-10 rounded-xl transition-all shadow-lg hover:shadow-blue-500/25 transform hover:-translate-y-0.5">
+                Salvar Configurações
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

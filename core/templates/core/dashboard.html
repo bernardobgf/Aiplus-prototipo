@@ -1,0 +1,99 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="p-10 overflow-y-auto h-full">
+    <div class="flex items-center justify-between mb-10">
+        <div>
+            <h1 class="text-3xl font-bold text-white">Dashboard de Performance</h1>
+            <p class="text-slate-400 mt-1">Visão geral das suas campanhas ativas</p>
+        </div>
+        <button class="bg-brand-surface hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm border border-slate-600 transition-colors">
+            Exportar Relatório
+        </button>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <div class="bg-brand-sidebar border border-slate-700/50 p-6 rounded-2xl shadow-lg hover:border-brand-primary/50 transition-colors cursor-default group">
+            <h3 class="text-slate-400 text-sm font-medium uppercase tracking-wide">Investimento</h3>
+            <div class="mt-4 flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-white">R$ 145k</span>
+                <span class="text-emerald-400 text-xs font-bold bg-emerald-400/10 px-2 py-1 rounded-full">+12%</span>
+            </div>
+        </div>
+        <div class="bg-brand-sidebar border border-slate-700/50 p-6 rounded-2xl shadow-lg hover:border-brand-primary/50 transition-colors cursor-default">
+            <h3 class="text-slate-400 text-sm font-medium uppercase tracking-wide">Leads</h3>
+            <div class="mt-4 flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-white">3,450</span>
+                <span class="text-emerald-400 text-xs font-bold bg-emerald-400/10 px-2 py-1 rounded-full">+5%</span>
+            </div>
+        </div>
+        <div class="bg-brand-sidebar border border-slate-700/50 p-6 rounded-2xl shadow-lg hover:border-brand-primary/50 transition-colors cursor-default">
+            <h3 class="text-slate-400 text-sm font-medium uppercase tracking-wide">CPA</h3>
+            <div class="mt-4 flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-white">R$ 42</span>
+                <span class="text-rose-400 text-xs font-bold bg-rose-400/10 px-2 py-1 rounded-full">-2%</span>
+            </div>
+        </div>
+        <div class="bg-brand-sidebar border border-slate-700/50 p-6 rounded-2xl shadow-lg hover:border-brand-primary/50 transition-colors cursor-default">
+            <h3 class="text-slate-400 text-sm font-medium uppercase tracking-wide">ROI</h3>
+            <div class="mt-4 flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-brand-primary">340%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-brand-sidebar border border-slate-700/50 p-8 rounded-2xl shadow-xl">
+        <h3 class="text-xl font-bold text-white mb-6">Trajetória de Crescimento</h3>
+        <div class="relative h-96 w-full">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('myChart');
+    
+    // Gradiente para o gráfico (Estilo Premium)
+    const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); // Azul forte
+    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)'); // Transparente
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            datasets: [{
+                label: 'Conversões',
+                data: [12, 19, 15, 25, 22, 35],
+                borderColor: '#3b82f6',
+                backgroundColor: gradient,
+                borderWidth: 3,
+                pointBackgroundColor: '#1e293b',
+                pointBorderColor: '#3b82f6',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { 
+                    grid: { color: 'rgba(255,255,255,0.05)' }, 
+                    ticks: { color: '#94a3b8', font: {family: 'Inter'} },
+                    border: {display: false}
+                },
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { color: '#94a3b8', font: {family: 'Inter'} },
+                    border: {display: false}
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

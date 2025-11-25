@@ -1,0 +1,17 @@
+# Diretórios de ambiente virtual
+venv/
+env/
+
+# Arquivos de segurança (CRÍTICO)
+.env
+
+# Arquivos do Django/Python
+*.pyc
+__pycache__/
+*.sqlite3
+db.sqlite3
+/staticfiles  # A pasta onde os arquivos estáticos serão coletados
+
+# IDEs
+.vscode/
+.idea/

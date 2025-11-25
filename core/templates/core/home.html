@@ -1,0 +1,91 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<header class="h-16 border-b border-slate-700/50 flex items-center justify-between px-8 bg-brand-bg/80 backdrop-blur z-10">
+    <div class="flex items-center gap-3">
+        <h2 class="font-semibold text-lg text-white">Novo Chat de Campanha</h2>
+    </div>
+
+    <a href="{% url 'clear_chat' %}" 
+       onclick="return confirm('Tem certeza? Isso apagará todo o histórico da conversa.')"
+       class="flex items-center gap-2 text-xs font-medium text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 px-3 py-2 rounded-lg transition-colors"
+       title="Apagar todo o histórico">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+        Limpar Conversa
+    </a>
+</header>
+
+<div class="flex-1 overflow-y-auto p-8 space-y-6 scroll-smooth" id="chat-container">
+    <div class="flex justify-center mb-8">
+        <span class="text-xs text-slate-500 uppercase tracking-widest">Hoje</span>
+    </div>
+
+    <div class="flex justify-start">
+        <div class="bg-slate-800 text-slate-200 p-5 rounded-2xl rounded-tl-none max-w-2xl border border-slate-700/50 shadow-sm">
+            <p>Olá! Sou o <strong>AIplus</strong>. Como posso ajudar a escalar sua marca hoje?</p>
+        </div>
+    </div>
+
+    {% for msg in messages %}
+        <div class="flex {% if msg.role == 'user' %}justify-end{% else %}justify-start{% endif %} animate-fade-in-up">
+            <div class="{% if msg.role == 'user' %}bg-brand-primary text-white{% else %}bg-slate-800 text-slate-200 border border-slate-700/50{% endif %} p-5 rounded-2xl {% if msg.role == 'user' %}rounded-tr-none{% else %}rounded-tl-none{% endif %} max-w-3xl shadow-md text-base leading-relaxed">
+                {{ msg.content|linebreaksbr }}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="p-6 bg-brand-bg border-t border-slate-700/50">
+    <form id="chat-form" class="relative max-w-4xl mx-auto">
+        <input type="text" id="user-input" 
+            class="w-full bg-brand-surface text-white border border-slate-600/50 rounded-xl py-4 px-6 pr-16 focus:outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 placeholder-slate-400 shadow-inner transition-all"
+            placeholder="Descreva sua campanha ou faça uma pergunta..." autocomplete="off">
+        
+        <button type="submit" class="absolute right-2 top-2 bottom-2 bg-brand-primary hover:bg-blue-600 text-white p-3 rounded-lg transition-all shadow-lg hover:shadow-blue-500/25">
+            <svg class="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+        </button>
+    </form>
+</div>
+
+<script>
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('user-input');
+    const container = document.getElementById('chat-container');
+
+    // Auto-scroll para o fundo
+    container.scrollTop = container.scrollHeight;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = input.value;
+        if (!text) return;
+
+        // Adiciona msg do usuário
+        container.innerHTML += `
+            <div class="flex justify-end">
+                <div class="bg-brand-primary text-white p-5 rounded-2xl rounded-tr-none max-w-3xl shadow-md text-base leading-relaxed">
+                    ${text}
+                </div>
+            </div>`;
+        input.value = '';
+        container.scrollTop = container.scrollHeight;
+
+        // Chama Django API
+        const response = await fetch('/api/chat/', {
+            method: 'POST',
+            body: JSON.stringify({message: text}),
+            headers: {'Content-Type': 'application/json'}
+        });
+        const data = await response.json();
+
+        // Adiciona resposta IA
+        container.innerHTML += `
+            <div class="flex justify-start">
+                <div class="bg-slate-800 text-slate-200 border border-slate-700/50 p-5 rounded-2xl rounded-tl-none max-w-3xl shadow-md text-base leading-relaxed">
+                    ${data.response.replace(/\n/g, '<br>')}
+                </div>
+            </div>`;
+        container.scrollTop = container.scrollHeight;
+    });
+</script>
+{% endblock %}
